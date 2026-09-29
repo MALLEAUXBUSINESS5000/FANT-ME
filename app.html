@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Tes fantômes — Fantômes</title>
+<link rel="stylesheet" href="/style.css">
+<script defer src="/_vercel/insights/script.js"></script>
+<style>
+.haut{position:sticky;top:0;background:var(--nuit);color:var(--creme);padding:12px 22px;z-index:5}
+.haut div{max-width:620px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.haut b{font-family:Georgia,serif;font-size:1.7rem;color:#fff}
+.haut span{font-size:.85rem;opacity:.85}
+.fant{border-top:1px solid var(--trait);padding:18px 0}
+.fant .an{font-family:Georgia,serif;font-size:2.4rem;font-weight:700;color:var(--orange);line-height:1}
+.fant h3{font-family:Georgia,serif;font-size:1.2rem;margin-top:6px}
+.ligne{display:flex;align-items:center;gap:10px;margin:12px 0;font-weight:600}
+.ligne input{width:26px;height:26px;accent-color:var(--orange)}
+.sec{background:none;border:2px solid var(--nuit);color:var(--nuit);font:inherit;font-weight:700;padding:12px 16px;border-radius:10px;min-height:48px;width:100%}
+.lettre{display:none;margin-top:12px}.lettre.ouvert{display:block}
+.lettre textarea,.lettre input{width:100%;font:inherit;font-size:16px;padding:10px;border:1px solid var(--trait);border-radius:8px;background:#fff;color:var(--nuit);margin-bottom:8px}
+.lettre textarea{height:300px}
+input[type=file]{display:none}
+</style></head>
+<body>
+<div class="haut"><div><span>À économiser sur l’année</span><b id="tot">0 €</b></div></div>
+<main>
+<h1>Tes fantômes.</h1>
+<p>Dépose l’export CSV de ton relevé (3 à 12 mois). Il reste sur ton appareil : rien n’est envoyé.</p>
+<p style="margin-top:20px"><label class="bouton" for="f" style="cursor:pointer">Choisir mon relevé CSV</label><input id="f" type="file" accept=".csv,.txt"></p>
+<p style="margin-top:12px"><button class="sec" id="ex">Essayer avec un exemple</button></p>
+<div id="res" style="margin-top:32px"></div>
+</main>
+<script src="/app.js"></script>
+<script>
+let items=[],u={nom:'',adresse:''};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function total(){const t=items.filter(i=>i.coche).reduce((a,i)=>a+i.annuel,0);$('tot').textContent=eur(t)}
+function vide(m){$('res').innerHTML=`<p><strong>${m}</strong></p><p class="petit" style="margin-top:8px">Dans l’espace de ta banque, cherche « exporter » ou « télécharger » les opérations, au format CSV, sur 3 mois ou plus. Le PDF n’est pas encore lu.</p>`}
+function rendre(){
+  if(!items.length)return vide('Aucun prélèvement régulier repéré.');
+  const som=items.reduce((a,i)=>a+i.annuel,0);
+  $('res').innerHTML=`<p><strong>${items.length} prélèvements réguliers, ${eur(som)} par an.</strong> Coche ceux que tu veux arrêter.</p>`+items.map((it,k)=>`<div class="fant"><div class="an">${eur(it.annuel)} <span class="petit" style="font-family:system-ui;font-size:.9rem;font-weight:400">par an</span></div><h3>${esc(it.nom)}</h3><p class="petit">${eur(it.montant,2)} ${it.lib}, vu ${it.n} fois</p><label class="ligne"><input type="checkbox" data-k="${k}" ${it.coche?'checked':''}>Je veux résilier</label><button class="sec" data-l="${k}">Écrire la lettre de résiliation</button><div class="lettre" id="l${k}"><p class="petit" style="margin:8px 0">Complète une fois, la lettre se met à jour.</p><input placeholder="Ton nom" data-u="nom"><input placeholder="Ton adresse" data-u="adresse"><textarea id="t${k}" readonly></textarea><button class="bouton" data-c="${k}" style="width:100%;border:0;font:inherit;font-weight:700">Copier la lettre</button></div></div>`).join('');
+  total()}
+$('res').addEventListener('click',e=>{const b=e.target;
+  if(b.dataset.l!=null){const k=b.dataset.l,p=$('l'+k);p.classList.toggle('ouvert');$('t'+k).value=lettre(u,items[k])}
+  if(b.dataset.c!=null){const t=$('t'+b.dataset.c);t.select();(navigator.clipboard?navigator.clipboard.writeText(t.value):Promise.reject()).catch(()=>document.execCommand('copy'));b.textContent='Lettre copiée'}
+  if(b.dataset.k!=null){items[b.dataset.k].coche=b.checked;total()}});
+$('res').addEventListener('input',e=>{const f=e.target.dataset.u;if(!f)return;u[f]=e.target.value;items.forEach((it,k)=>{const t=$('t'+k);if(t&&t.closest('.lettre').classList.contains('ouvert'))t.value=lettre(u,it)})});
+function go(txt){items=detect(parseCSV(txt));rendre()}
+$('f').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>go(r.result);r.onerror=()=>vide('Lecture impossible.');r.readAsText(f,'utf-8')});
+$('ex').onclick=()=>go(exemple());
+</script></body></html>

@@ -1,0 +1,30 @@
+:root{--nuit:#1B1F3B;--orange:#E8590C;--creme:#FAF6EF;--trait:rgba(27,31,59,.16)}
+*{box-sizing:border-box;margin:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--creme);color:var(--nuit);font:18px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body.avec-barre{padding-bottom:96px}
+main{max-width:620px;margin:0 auto;padding:28px 22px 8px}
+h1,h2,.gros{font-family:Georgia,"Times New Roman",serif;font-weight:700}
+h1{font-size:2.15rem;line-height:1.12;margin:18px 0 18px;letter-spacing:-.01em}
+h2{font-size:1.45rem;line-height:1.2;margin:44px 0 10px}
+p+p{margin-top:12px}
+.marque{display:flex;align-items:center;gap:8px;font-weight:700;text-decoration:none;color:inherit}
+.gros{font-size:5rem;line-height:1;color:var(--orange);margin:30px 0 4px}
+.bouton{display:block;background:var(--orange);color:#fff;text-align:center;text-decoration:none;font-weight:700;font-size:1.1rem;padding:18px 20px;border-radius:10px;min-height:56px}
+.bouton:hover{background:#c94a06}
+a:focus-visible,.bouton:focus-visible{outline:3px solid var(--nuit);outline-offset:3px}
+ul.liste{list-style:none;padding:0}
+ul.liste li{padding:16px 0;border-top:1px solid var(--trait)}
+ul.liste li:last-child{border-bottom:1px solid var(--trait)}
+ul.liste strong{display:block;font-family:Georgia,serif;font-size:1.15rem}
+.prix{font-family:Georgia,serif;font-size:2.6rem;font-weight:700;line-height:1;margin:6px 0 10px}
+.petit{font-size:.9rem;opacity:.8}
+.barre{position:fixed;left:0;right:0;bottom:0;background:var(--creme);padding:12px 22px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--trait)}
+.barre .bouton{max-width:576px;margin:0 auto}
+footer{max-width:620px;margin:0 auto;padding:36px 22px 28px;font-size:.88rem}
+footer a{color:inherit;margin-right:14px;display:inline-block;padding:6px 0}
+.legal h1{font-size:1.8rem}
+.legal h2{font-size:1.15rem;margin-top:28px}
+.champ{background:#FFE9D6;padding:0 4px;border-radius:3px}
+.centre{text-align:center;padding-top:14vh}
+@media(min-width:700px){h1{font-size:3rem}main{padding-top:48px}}
